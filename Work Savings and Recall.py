@@ -18,7 +18,8 @@ def main():
     plt.title('RCT Work Savings and Recall', fontdict={'fontsize': 20})
     plt.legend()
     plt.show()
-    plt.savefig('WorkSavingsPCSK9_RCT_regular.png', dpi = 300)
+    # plt.savefig('WorkSavingsPCSK9_RCT_regular.png', dpi = 300)
+    #commenting out the "save" part because Python doesn't seem to like saving and showing at the same time
 
 def abstractCalc():
     # Input abstract screened predictions here:
@@ -40,7 +41,7 @@ def abstractCalc():
     # review would have saved if they filtered out all articles with predictions below these numbers
     worksavings_abstract = []
     NumDiscarded = 0
-    for threshold in n: #loop through predictions
+    for threshold in n: #loop through thresholds
         for prediction in abstractScreenedList: #loop through list from input file
             if ((eval(prediction.strip()))) <= threshold:
                 NumDiscarded = NumDiscarded + 1         # counting up the number that are below the threshold
