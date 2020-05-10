@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 
 def main():
-    # n = [0, .0001, .001, .01, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
     n, worksavings_abstract = abstractCalc()
     o, recall_fulltext, o2, worksavings_fulltext = fullTextCalc()
     p, recall_included = includedCalc()
@@ -19,7 +18,7 @@ def main():
     plt.title('RCT Work Savings and Recall', fontdict={'fontsize': 20})
     plt.legend()
     plt.show()
-    # plt.savefig('WorkSavingsPCSK9_RCT_regular.png', dpi = 300)
+    plt.savefig('WorkSavingsPCSK9_RCT_regular.png', dpi = 300)
 
 def abstractCalc():
     # Input abstract screened predictions here:
@@ -29,28 +28,30 @@ def abstractCalc():
 
     numAbstractScreened = 0
 
+# Counter to figure out the total number of predictions; will use for calculations in next step
     for prediction in abstractScreenedList:
         numAbstractScreened = numAbstractScreened + 1
     print("Number of articles abstract screened:", numAbstractScreened, "\n")
 
-    ##For work savings, input files are abstract screened and full-text screened, and calculate the percent
-    #of predictions below the threshold:
+    ## Work Savings: Calculate the percent of predictions below each threshold:
 
     n = [0, .0001, .001, .01, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
+    # n holds the list of "thresholds"; we will be calculating the amount of work someone doing this
+    # review would have saved if they filtered out all articles with predictions below these numbers
     worksavings_abstract = []
     NumDiscarded = 0
-    for threshold in n:
-        for prediction in abstractScreenedList:
+    for threshold in n: #loop through predictions
+        for prediction in abstractScreenedList: #loop through list from input file
             if ((eval(prediction.strip()))) <= threshold:
-                NumDiscarded = NumDiscarded + 1
-        workSavings = NumDiscarded / numAbstractScreened
+                NumDiscarded = NumDiscarded + 1         # counting up the number that are below the threshold
+        workSavings = NumDiscarded / numAbstractScreened # Number below threshold divided total
         # print("Threshold:", threshold)
         # print("Number filtered out:", NumDiscarded)
         # workSavings = NumDiscarded / numAbstractScreened
-        worksavings_abstract.append(workSavings)
-        NumDiscarded = 0
+        worksavings_abstract.append(workSavings)   #making a list of the work savings values at each threshold
+        NumDiscarded = 0 #Set NumDiscarded back to zero to get a fresh count for the next prediction
         # print("Work Savings:", workSavings, "\n")
-    return n, worksavings_abstract
+    return n, worksavings_abstract # the values that will be x and y for this line on the graph
 
 
 def fullTextCalc():
@@ -65,15 +66,14 @@ def fullTextCalc():
         numFullText = numFullText + 1
     print("Number of articles full-text screened:", numFullText, "\n")
 
-    ##Recall (the number of predictions above a certain threshold, calculated
-    #using full-text assessed and included):
+    ##Recall: Calculate the percent of predictions above each threshold:
 
     o = [0, .0001, .001, .01, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
     recall_fulltext = []
     NumRetained = 0
     for threshold in o:
         for prediction in fullTextList:
-            if ((eval(prediction.strip()))) >= threshold:
+            if ((eval(prediction.strip()))) >= threshold: # Check whether the predictions are above threshold
                 NumRetained = NumRetained + 1
         # print("Threshold:", threshold)
         # print("Number retained:", NumRetained)
@@ -84,10 +84,10 @@ def fullTextCalc():
     # print(n)
     # print(recall_full_text)
 
+#This file will be checked for both recall and work savings, since it is the result of filtering
+#after abstract screening, and will undergo further filtering after full-text screening.
 
-
-    ##For work savings, input files are abstract screened and full-text screened, and calculate the percent
-    #of predictions below the threshold:
+#This work savings calculation is the same as the previous one for the abstract screened files.
 
     o2 = [0, .0001, .001, .01, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1]
     worksavings_fulltext = []
@@ -103,8 +103,11 @@ def fullTextCalc():
         worksavings_fulltext.append(workSavings)
         NumDiscarded = 0
         # print("Work Savings:", workSavings, "\n")
-    return o, recall_fulltext, o2, worksavings_fulltext
+    return o, recall_fulltext, o2, worksavings_fulltext #2 x's and 2 y's
 
+
+#Included articles are only checked for recall; they will not be filtered any further, so there
+#is no more work savings to calculate
 
 def includedCalc():
     #Input included article predictions here:
